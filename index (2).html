@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="si">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Digital Thorana – Poson 2026</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Sinhala:wght@400;700&family=Cinzel+Decorative:wght@700;900&display=swap');
+
+        :root {
+            --gold:   #FFD700;
+            --gold2:  #FFA500;
+            --gold3:  #FF8C00;
+            --deep:   #0d0500;
+            --mid:    #3a1a00;
+            --red:    #CC0000;
+            --white:  #fff8e7;
+            --glow:   #ffe066;
+            --lantern:#ff6600;
+        }
+
+        *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+
+        html, body {
+            width:100%; min-height:100%;
+            background:var(--deep);
+            font-family:'Noto Serif Sinhala',serif;
+            overflow-x:hidden; color:var(--white);
+        }
+
+        /* ── SKY ── */
+        #sky {
+            position:fixed; inset:0; z-index:0;
+            background:url('background.png') center/cover no-repeat fixed;
+            overflow:hidden;
+        }
+        .star {
+            position:absolute; border-radius:50%; background:#fff;
+            animation:twinkle var(--d,3s) ease-in-out infinite;
+        }
+        @keyframes twinkle {
+            0%,100%{opacity:.15;transform:scale(1)}
+            50%    {opacity:1; transform:scale(1.4)}
+        }
+
+        /* floating lanterns */
+        .lantern-wrap {
+            position:fixed; bottom:-60px; z-index:1;
+            animation:floatUp var(--fu,30s) linear infinite; opacity:0;
+        }
+        @keyframes floatUp {
+            0%  {bottom:-60px;opacity:0;transform:translateX(0)}
+            10% {opacity:.9}
+            90% {opacity:.7}
+            100%{bottom:110vh;opacity:0;transform:translateX(var(--dx,30px))}
+        }
+        .lantern{border-radius:50% 50% 60% 60%;position:relative;}
+        .lantern::before{
+            content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);
+            width:2px;height:8px;background:#cc6600;
+        }
+        .lantern::after{
+            content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);
+            width:1.5px;height:12px;background:#cc6600;border-radius:1px;
+        }
+
+        /* ── WRAPPER ── */
+        #wrapper {
+            position:relative;z-index:2;display:flex;flex-direction:column;
+            align-items:center;min-height:100vh;padding-bottom:60px;
+        }
+
+        /* ── HEADER ── */
+        #header {
+            width:100%;text-align:center;padding:24px 16px 8px;
+            background:linear-gradient(180deg,#2a0900 0%,transparent 100%);
+        }
+        #header h1 {
+            font-family:'Cinzel Decorative',serif;
+            font-size:clamp(1.2rem,3.5vw,2.4rem);color:var(--gold);
+            text-shadow:0 0 18px var(--gold2),0 2px 4px #000;
+            letter-spacing:2px;animation:glowPulse 2.5s ease-in-out infinite;
+        }
+        #header p{font-size:clamp(.7rem,1.8vw,1rem);color:#ffcc88;margin-top:5px;letter-spacing:1px;}
+        @keyframes glowPulse{
+            0%,100%{text-shadow:0 0 18px var(--gold2),0 2px 4px #000}
+            50%    {text-shadow:0 0 40px #ffe44d,0 0 70px #ffaa00,0 2px 4px #000}
+        }
+
+        /* buntings */
+        .bunting-row{width:100%;display:flex;justify-content:center;padding:4px 0 6px;flex-wrap:wrap;}
+        .flag-tri{
+            width:0;height:0;
+            border-left:13px solid transparent;border-right:13px solid transparent;
+            border-top:20px solid var(--c,red);
+            animation:swayFlag 1.8s ease-in-out infinite;margin:0 1px;
+        }
+        .flag-tri:nth-child(odd){animation-delay:.3s;}
+        @keyframes swayFlag{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+
+        /* ── STAGE ── */
+        #stage {
+            width:min(1100px,98vw);
+            display:grid;
+            grid-template-columns:200px 1fr 200px;
+            grid-template-rows:auto auto auto auto auto;
+            gap:10px;margin:8px auto 0;
+            align-items:center;justify-items:center;
+        }
+        #thorana{grid-column:2;grid-row:1/6;position:relative;width:100%;user-select:none;}
+
+        /* ══════════════════════════════════════════
+           රස්වළල්ල — radiant halo / rays of light
+           sitting behind the central thorana image
+        ══════════════════════════════════════════ */
+        #rasvalalla{
+            position:absolute;
+            top:50%;left:50%;
+            width:135%;height:135%;
+            transform:translate(-50%,-50%);
+            z-index:0;
+            pointer-events:none;
+        }
+        /* soft multi-colour aura glow (Buddhist-flag hues) */
+        #rasvalalla::before{
+            content:'';position:absolute;inset:0;border-radius:50%;
+            background:conic-gradient(
+                from 0deg,
+                #ffe06699, #ff8c0099, #ffd70099, #4dd2ff99,
+                #ff5f5f99, #ffe06699
+            );
+            filter:blur(38px);
+            animation:haloSpin 14s linear infinite, haloPulse 4s ease-in-out infinite;
+            opacity:.75;
+        }
+        @keyframes haloSpin{to{transform:rotate(360deg)}}
+        @keyframes haloPulse{
+            0%,100%{opacity:.55;transform:scale(1)}
+            50%    {opacity:.9; transform:scale(1.07)}
+        }
+        /* sharp golden rays radiating outward */
+        .ray-burst{
+            position:absolute;inset:0;
+            display:flex;align-items:center;justify-content:center;
+            animation:haloSpin 22s linear infinite reverse;
+        }
+        .ray{
+            position:absolute;top:50%;left:50%;
+            width:3px;height:46%;
+            transform-origin:top center;
+            background:linear-gradient(to bottom,
+                rgba(255,235,150,.95) 0%,
+                rgba(255,200,80,.55) 35%,
+                rgba(255,180,60,0) 100%);
+            animation:rayShimmer 2.4s ease-in-out infinite;
+            border-radius:3px;
+        }
+        @keyframes rayShimmer{
+            0%,100%{opacity:.35;}
+            50%    {opacity:1;}
+        }
+        /* bright inner glow disc right behind the image */
+        #rasvalalla-core{
+            position:absolute;top:50%;left:50%;
+            width:62%;height:62%;
+            transform:translate(-50%,-50%);
+            border-radius:50%;
+            background:radial-gradient(circle,
+                rgba(255,255,230,.9) 0%,
+                rgba(255,215,120,.55) 45%,
+                rgba(255,180,60,0) 75%);
+            filter:blur(6px);
+            animation:corePulse 3.2s ease-in-out infinite;
+        }
+        @keyframes corePulse{
+            0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1);}
+            50%    {opacity:1; transform:translate(-50%,-50%) scale(1.06);}
+        }
+        /* twinkling light specks drifting within the halo */
+        .halo-spark{
+            position:absolute;border-radius:50%;
+            background:#fff7d6;box-shadow:0 0 6px 2px #ffe066cc;
+            animation:sparkTwinkle var(--sd,2.4s) ease-in-out infinite;
+        }
+        @keyframes sparkTwinkle{
+            0%,100%{opacity:0;transform:scale(.4);}
+            50%    {opacity:1; transform:scale(1);}
+        }
+
+        /* keep the actual image above the halo */
+        #thorana > img{position:relative;z-index:2;}
+        .flame-cluster,.blink-row{z-index:3;}
+
+        /* flames */
+        .flame-cluster{position:absolute;top:-4%;left:50%;transform:translateX(-50%);display:flex;gap:5px;}
+        .flame{
+            border-radius:50% 50% 30% 30%;
+            background:linear-gradient(180deg,#fff700 0%,#ff8800 50%,#ff2200 100%);
+            animation:flameFlicker var(--ff,.6s) ease-in-out infinite alternate;
+            box-shadow:0 0 8px #ff880088;
+        }
+        @keyframes flameFlicker{
+            0%{transform:scaleX(1) scaleY(1) rotate(-3deg);opacity:.9}
+            100%{transform:scaleX(.8) scaleY(1.2) rotate(3deg);opacity:1}
+        }
+
+        /* arch lights */
+        .blink-row{position:absolute;display:flex;gap:3px;flex-wrap:wrap;justify-content:center;}
+        .blink-row.top      {top:0;left:10%;width:80%;}
+        .blink-row.left-side {top:5%;left:2%;width:13%;flex-direction:column;}
+        .blink-row.right-side{top:5%;right:2%;width:13%;flex-direction:column;}
+        .bulb{
+            width:8px;height:8px;border-radius:50%;
+            background:var(--bc,#FFD700);box-shadow:0 0 6px 2px var(--bc,#FFD700);
+            animation:blinkBulb var(--bd,1s) step-start infinite;
+        }
+        @keyframes blinkBulb{0%,49%{opacity:1}50%,100%{opacity:.1}}
+
+        /* ── PANELS ── */
+        .panel-col-left {grid-column:1;display:flex;flex-direction:column;gap:10px;width:100%;}
+        .panel-col-right{grid-column:3;display:flex;flex-direction:column;gap:10px;width:100%;}
+        .panel-col-left,.panel-col-right{grid-row:1/6;align-self:center;}
+
+        .panel-btn{
+            position:relative;width:100%;aspect-ratio:1/1.1;
+            background:linear-gradient(145deg,#1e0800 0%,#2e1200 60%,#1a0600 100%);
+            border-radius:10px;cursor:pointer;overflow:visible;
+            transition:transform .25s;display:flex;flex-direction:column;
+            align-items:center;justify-content:center;gap:6px;text-decoration:none;
+        }
+        .panel-btn:hover{transform:scale(1.06);}
+        .panel-btn::before{
+            content:'';position:absolute;inset:-3px;border-radius:13px;
+            background:conic-gradient(#ff0000,#ff8800,#ffd700,#00ff88,#00ccff,#aa44ff,#ff00cc,#ff0000);
+            animation:rotateBorder 3s linear infinite;z-index:0;
+        }
+        .panel-btn::after{
+            content:'';position:absolute;inset:3px;border-radius:8px;
+            background:linear-gradient(145deg,#1e0800,#2e1200,#1a0600);z-index:1;
+        }
+        @keyframes rotateBorder{to{transform:rotate(360deg)}}
+
+        .panel-glow-ring{
+            position:absolute;inset:-8px;border-radius:18px;background:transparent;
+            box-shadow:0 0 10px 3px #ffd70066,0 0 20px 6px #ff880044,0 0 35px 10px #ff220022;
+            animation:ringPulse 2s ease-in-out infinite;pointer-events:none;z-index:0;
+        }
+        @keyframes ringPulse{
+            0%,100%{box-shadow:0 0 10px 3px #ffd70066,0 0 20px 6px #ff880044,0 0 35px 10px #ff220022}
+            50%    {box-shadow:0 0 16px 6px #ffd700aa,0 0 32px 12px #ff880077,0 0 55px 18px #ff220044}
+        }
+        .panel-corners{position:absolute;inset:-2px;pointer-events:none;z-index:10;}
+        .panel-corners span{
+            position:absolute;width:10px;height:10px;border-radius:50%;
+            background:var(--cc,#FFD700);box-shadow:0 0 8px 4px var(--cc,#FFD700);
+            animation:cornerBlink 1s step-start infinite;
+        }
+        .panel-corners span:nth-child(1){top:-3px;left:-3px;animation-delay:0s;}
+        .panel-corners span:nth-child(2){top:-3px;right:-3px;animation-delay:.25s;}
+        .panel-corners span:nth-child(3){bottom:-3px;right:-3px;animation-delay:.5s;}
+        .panel-corners span:nth-child(4){bottom:-3px;left:-3px;animation-delay:.75s;}
+        @keyframes cornerBlink{0%,49%{opacity:1}50%,100%{opacity:.1}}
+
+        .run-strip{position:absolute;z-index:8;pointer-events:none;display:flex;}
+        .run-strip.top   {top:-1px;left:8px;right:8px;height:5px;flex-direction:row;}
+        .run-strip.bottom{bottom:-1px;left:8px;right:8px;height:5px;flex-direction:row;}
+        .run-strip.left  {left:-1px;top:8px;bottom:8px;width:5px;flex-direction:column;}
+        .run-strip.right {right:-1px;top:8px;bottom:8px;width:5px;flex-direction:column;}
+        .run-dot{
+            flex:0 0 auto;width:5px;height:5px;border-radius:50%;
+            background:var(--rc,#FFD700);box-shadow:0 0 5px 2px var(--rc,#FFD700);
+            opacity:0;animation:runLight 2s linear infinite;
+        }
+        @keyframes runLight{0%{opacity:0}10%{opacity:1}90%{opacity:1}100%{opacity:0}}
+
+        .panel-inner{
+            position:relative;z-index:5;display:flex;flex-direction:column;
+            align-items:center;justify-content:center;gap:5px;
+            padding:8px 6px;width:100%;height:100%;
+        }
+        .panel-title{
+            font-size:clamp(8px,1.1vw,13px);color:var(--gold);text-align:center;
+            font-weight:700;text-shadow:0 0 8px #000,0 0 4px #ffd700;line-height:1.3;
+        }
+
+        /* ── MANUAL STORY POPUP ── */
+        #popup-overlay{
+            position:fixed;inset:0;z-index:100;
+            background:rgba(0,0,0,0);
+            display:flex;align-items:center;justify-content:center;
+            opacity:0;visibility:hidden;pointer-events:none;
+            transition:opacity .45s ease,background-color .45s ease,visibility 0s linear .45s;
+        }
+        #popup-overlay.show{
+            opacity:1;visibility:visible;pointer-events:auto;
+            background:rgba(0,0,0,.88);
+            transition:opacity .45s ease,background-color .45s ease;
+        }
+        #popup-box{
+            background:linear-gradient(135deg,#2a0d00 0%,#1a0500 100%);
+            border:3px solid var(--gold);border-radius:16px;
+            padding:22px 22px 20px;max-width:560px;width:92%;position:relative;
+            max-height:88vh;overflow-y:auto;
+            box-shadow:0 0 40px #ffd70066,0 0 80px #ff880033;
+            opacity:0;transform:translateY(36px) scale(.88);
+            transition:opacity .45s cubic-bezier(.22,.68,0,1.2),transform .45s cubic-bezier(.22,.68,0,1.2);
+        }
+        #popup-overlay.show #popup-box{
+            opacity:1;transform:translateY(0) scale(1);
+        }
+        #popup-box h2{
+            font-family:'Cinzel Decorative',serif;color:var(--gold);font-size:1.15rem;
+            text-align:center;margin-bottom:12px;text-shadow:0 0 12px #ffd700;
+            padding:0 34px;
+        }
+        #popup-story-art{
+            text-align:center;margin:0 0 14px;border-radius:10px;overflow:hidden;
+            box-shadow:0 0 20px rgba(0,0,0,.6);
+        }
+        #popup-story-art img{display:block;width:100%;max-height:280px;object-fit:cover;border-radius:10px;}
+        #popup-text{color:#ffe8bb;line-height:1.75;font-size:.93rem;text-align:center;}
+        #popup-close{
+            position:absolute;top:10px;right:14px;font-size:1.5rem;cursor:pointer;
+            color:var(--gold2);background:none;border:none;transition:color .2s,transform .2s;
+            z-index:5;line-height:1;
+        }
+        #popup-close:hover{color:#fff;transform:rotate(90deg);}
+        #popup-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:18px;}
+        .pop-btn{
+            background:linear-gradient(90deg,#8b4500,#ffaa00,#8b4500);
+            border:none;color:#000;font-weight:700;font-size:.88rem;
+            padding:8px 18px;border-radius:6px;cursor:pointer;transition:transform .15s;
+            white-space:nowrap;
+        }
+        .pop-btn:hover{transform:scale(1.05);}
+
+        /* ══════════════════════════════════════════
+           CINEMATIC AUTO-POPUP  (audio-synced)
+        ══════════════════════════════════════════ */
+        #auto-overlay {
+            position:fixed;inset:0;z-index:300;
+            display:flex;align-items:center;justify-content:center;
+            background:radial-gradient(ellipse at center,rgba(0,0,0,.45) 0%,rgba(0,0,0,.82) 100%);
+            opacity:0;pointer-events:none;
+            transition:opacity .6s ease;
+        }
+        #auto-overlay.visible{opacity:1;pointer-events:auto;}
+
+        #auto-card {
+            position:relative;
+            max-width:min(620px,90vw);
+            width:100%;
+            max-height:92vh;
+            display:flex;flex-direction:column;
+            border-radius:20px;overflow:hidden;
+            background:linear-gradient(160deg,#2a0d00 0%,#1a0500 100%);
+            box-shadow:0 0 0 3px var(--gold),0 0 50px #ffd70066,0 0 100px #ff880022,0 30px 70px rgba(0,0,0,.85);
+            transform:translateY(30px) scale(.96);opacity:0;
+            transition:transform .6s cubic-bezier(.22,.68,0,1.2),opacity .6s ease;
+        }
+        #auto-overlay.visible #auto-card{transform:translateY(0) scale(1);opacity:1;}
+
+        /* Image area — contained so the full picture is always visible, never cropped */
+        #auto-img-wrap{
+            position:relative;width:100%;flex:0 1 auto;
+            background:#000;
+            display:flex;align-items:center;justify-content:center;
+            max-height:56vh;overflow:hidden;
+        }
+        #auto-img {
+            width:100%;height:100%;
+            display:block;object-fit:contain;
+        }
+
+        /* Cross-fade + scale transition when switching from one chapter's
+           picture/text to the next (separate from the overlay's own
+           open/close animation) */
+        #auto-img-wrap, #auto-caption-inner{
+            transition:opacity .5s ease,transform .5s ease;
+            opacity:1;transform:scale(1);
+        }
+        #auto-card.frame-switching #auto-img-wrap,
+        #auto-card.frame-switching #auto-caption-inner{
+            opacity:0;transform:scale(1.04);
+        }
+
+        /* Caption sits below the image as a normal block — full text, no clipping */
+        #auto-caption {
+            padding:18px 26px 16px;
+            background:linear-gradient(165deg,#2a0d00 0%,#1a0500 100%);
+            overflow-y:auto;flex:1 1 auto;
+        }
+        #auto-chapter-lbl{
+            font-size:.68rem;letter-spacing:3px;color:var(--gold2);
+            text-transform:uppercase;opacity:.85;margin-bottom:6px;
+        }
+        #auto-title-lbl{
+            font-family:'Cinzel Decorative',serif;
+            font-size:clamp(.95rem,2.4vw,1.25rem);
+            color:var(--gold);text-shadow:0 0 14px #ffd700;line-height:1.4;
+            margin-bottom:10px;
+        }
+        #auto-text-lbl{
+            color:#ffe8bb;font-size:clamp(.8rem,1.7vw,.95rem);
+            line-height:1.75;
+        }
+
+        /* timer + dismiss row */
+        #auto-footer{
+            position:absolute;top:14px;right:14px;
+            display:flex;align-items:center;gap:10px;
+        }
+        #auto-dismiss{
+            background:rgba(13,5,0,.75);border:1.5px solid #ffd70077;
+            color:var(--gold2);font-size:.78rem;padding:5px 13px;
+            border-radius:20px;cursor:pointer;
+            transition:border-color .2s,color .2s;backdrop-filter:blur(4px);
+            white-space:nowrap;
+        }
+        #auto-dismiss:hover{border-color:var(--gold);color:var(--gold);}
+
+        /* countdown bar across very bottom */
+        #auto-bar-wrap{
+            position:absolute;bottom:0;left:0;right:0;
+            height:4px;background:rgba(58,26,0,.6);
+        }
+        #auto-bar{
+            height:100%;
+            background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold3));
+            transform-origin:left;
+            border-radius:2px;
+        }
+
+        /* ── SOUND TOGGLE ── */
+        #sound-btn{
+            position:fixed;bottom:20px;right:20px;z-index:50;
+            background:linear-gradient(135deg,var(--mid),#5a2a00);
+            border:2px solid var(--gold);border-radius:50%;
+            width:52px;height:52px;display:flex;align-items:center;justify-content:center;
+            cursor:pointer;font-size:1.5rem;box-shadow:0 0 12px #ffd70088;transition:transform .2s;
+        }
+        #sound-btn:hover{transform:scale(1.12);}
+
+        /* ── LANTERNS ── */
+        #lantern-row{
+            display:flex;gap:16px;margin-top:14px;
+            justify-content:center;flex-wrap:wrap;padding:0 10px;
+        }
+        .static-lantern{
+            border-radius:50% 50% 60% 60%;position:relative;
+            animation:staticSway 2.5s ease-in-out infinite;transform-origin:top center;
+        }
+        .static-lantern::before{
+            content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+            width:2px;height:10px;background:#cc6600;
+        }
+        .static-lantern::after{
+            content:'';position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);
+            width:1.5px;height:14px;background:#cc6600;border-radius:1px;
+        }
+        @keyframes staticSway{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+
+        /* ── FOOTER ── */
+        footer{margin-top:24px;padding:14px;text-align:center;color:#aa7744;font-size:.8rem;border-top:1px solid #3a1a00;width:100%;}
+        footer span{color:var(--gold2);}
+
+        /* ── RESPONSIVE ── */
+        @media(max-width:700px){
+            #stage{grid-template-columns:1fr 1fr;grid-template-rows:auto auto auto auto auto auto;gap:8px;}
+            .panel-col-left{grid-column:1;grid-row:2;flex-direction:row;flex-wrap:wrap;gap:8px;}
+            .panel-col-right{grid-column:2;grid-row:2;flex-direction:row;flex-wrap:wrap;gap:8px;}
+            .panel-col-left,.panel-col-right{align-self:start;}
+            #thorana{grid-column:1/3;grid-row:1;}
+            .panel-btn{width:calc(50% - 4px);aspect-ratio:1/1;}
+        }
+        @media(max-width:440px){.panel-btn{aspect-ratio:1/1;}}
+/* ══════════════════════════════════════════
+           WELCOME / START GATE
+           Shown on load — gathers the one click
+           browsers require before sound can autoplay.
+        ══════════════════════════════════════════ */
+        #welcome-overlay{
+            position:fixed;inset:0;z-index:500;
+            display:flex;align-items:center;justify-content:center;
+            background:radial-gradient(ellipse at center,#1a0a00 0%,#050200 100%);
+            opacity:1;visibility:visible;
+            transition:opacity .7s ease,visibility 0s linear .7s;
+            padding:24px;
+        }
+        #welcome-overlay.hide{
+            opacity:0;visibility:hidden;pointer-events:none;
+        }
+        /* soft drifting embers behind the welcome card */
+        #welcome-overlay::before{
+            content:'';position:absolute;inset:0;
+            background:
+                radial-gradient(circle at 20% 30%, #ffae0022 0%, transparent 45%),
+                radial-gradient(circle at 80% 70%, #ff660022 0%, transparent 45%),
+                radial-gradient(circle at 50% 95%, #ffd70018 0%, transparent 50%);
+            animation:emberDrift 8s ease-in-out infinite alternate;
+        }
+        @keyframes emberDrift{
+            0%  {transform:scale(1) translateY(0);}
+            100%{transform:scale(1.08) translateY(-10px);}
+        }
+        #welcome-card{
+            position:relative;z-index:1;
+            max-width:480px;width:100%;
+            text-align:center;
+            padding:42px 32px 36px;
+            border-radius:20px;
+            background:linear-gradient(160deg,#2a0d00 0%,#170400 100%);
+            border:2px solid var(--gold);
+            box-shadow:0 0 0 1px #ffd70033,0 0 40px #ffd70055,0 0 90px #ff880022,0 25px 60px rgba(0,0,0,.8);
+            transform:translateY(0) scale(1);
+            animation:welcomeFloat 4s ease-in-out infinite;
+        }
+        @keyframes welcomeFloat{
+            0%,100%{transform:translateY(0);}
+            50%    {transform:translateY(-6px);}
+        }
+        #welcome-dharmachakra{
+            font-size:2.4rem;color:var(--gold);
+            text-shadow:0 0 18px var(--gold2),0 0 36px #ff880088;
+            margin-bottom:10px;
+            animation:welcomeSpin 6s linear infinite;
+            display:inline-block;
+        }
+        @keyframes welcomeSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+        #welcome-eyebrow{
+            font-size:.72rem;letter-spacing:4px;color:#ffcc88;
+            text-transform:uppercase;opacity:.85;margin-bottom:10px;
+        }
+        #welcome-title{
+            font-family:'Cinzel Decorative',serif;
+            font-size:clamp(1.3rem,5vw,1.9rem);
+            color:var(--gold);text-shadow:0 0 18px var(--gold2),0 2px 4px #000;
+            line-height:1.4;margin-bottom:14px;
+        }
+        #welcome-blessing{
+            font-size:clamp(.95rem,3vw,1.15rem);
+            color:#ffe8bb;line-height:1.7;margin-bottom:8px;
+        }
+        #welcome-sub{
+            font-size:.85rem;color:#caa06c;line-height:1.6;margin-bottom:26px;
+        }
+        #welcome-enter-btn{
+            display:inline-flex;align-items:center;gap:10px;
+            background:linear-gradient(90deg,#8b4500,#ffaa00,#8b4500);
+            border:none;color:#1a0800;font-weight:700;font-size:1rem;
+            padding:14px 32px;border-radius:30px;cursor:pointer;
+            letter-spacing:1px;
+            box-shadow:0 0 16px #ffd700aa,0 6px 18px rgba(0,0,0,.5);
+            transition:transform .2s,box-shadow .2s;
+        }
+        #welcome-enter-btn:hover{transform:scale(1.06);box-shadow:0 0 26px #ffd700cc,0 8px 22px rgba(0,0,0,.6);}
+        #welcome-enter-btn:active{transform:scale(.97);}
+        #welcome-enter-icon{font-size:1.1rem;}
+        #welcome-foot{
+            margin-top:18px;font-size:.72rem;color:#8a6a44;letter-spacing:.5px;
+        }
+
+        @media(max-width:480px){
+            #welcome-card{padding:32px 22px 28px;}
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ══════════════════════════════════════════════
+     WELCOME / START GATE
+     First thing shown on load. One tap here both
+     greets the visitor and grants permission for
+     sound + the full audio-synced story to begin.
+══════════════════════════════════════════════ -->
+<div id="welcome-overlay">
+    <div id="welcome-card">
+        <div id="welcome-dharmachakra">☸︎</div>
+        <div id="welcome-eyebrow">Digital Thorana · Poson 2026</div>
+        <h1 id="welcome-title">මහා කපි ජාතකය</h1>
+        <p id="welcome-blessing">🌸 අසිරිමත් පෝසොන් මංගල්‍යක් වේවා 🌸</p>
+        <p id="welcome-sub">ඡායාරූප, කථාව සහ පසුබිම් සංගීතය එක්ව ගලායන<br>මේ වාර්තාමය වැඩසටහන ආරම්භ කිරීමට පහත ස්පර්ශ කරන්න.</p>
+        <button id="welcome-enter-btn">
+            <span id="welcome-enter-icon">▶</span> ආරම්භ කරන්න
+        </button>
+        <div id="welcome-foot">ශබ්දය සමඟ නැරඹීමට recommend කරනු ලැබේ</div>
+    </div>
+</div>
+
+<div id="sky"></div>
+
+<div id="wrapper">
+
+    <!-- Header -->
+    <div id="header">
+        <h1>☸︎ Digital Thorana ☸︎</h1>
+        <p>මහා කපි ජාතක කතාව</p>
+    </div>
+    <div class="bunting-row" id="bunting"></div>
+
+    <!-- Stage -->
+    <div id="stage">
+
+        <!-- LEFT PANELS (stories 1-5) -->
+        <div class="panel-col-left">
+            <div class="panel-btn" data-story="1">
+                <div class="panel-glow-ring"></div>
+                <div class="panel-corners"><span style="--cc:#FFD700"></span><span style="--cc:#FF4400"></span><span style="--cc:#00FF88"></span><span style="--cc:#FF00AA"></span></div>
+                <div class="panel-inner" style="padding:0;position:relative;">
+                    <img src="pic1.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:8px;z-index:2;">
+                    <div style="position:relative;z-index:6;width:100%;text-align:center;padding:6px;background:linear-gradient(transparent,rgba(0,0,0,0.75));border-radius:0 0 8px 8px;margin-top:auto;"><div class="panel-title">1</div></div>
+                </div>
+            </div>
+            <div class="panel-btn" data-story="2">
+                <div class="panel-glow-ring"></div>
+                <div class="panel-corners"><span style="--cc:#00CCFF"></span><span style="--cc:#FFD700"></span><span style="--cc:#FF4400"></span><span style="--cc:#AA44FF"></span></div>
+                <div class="panel-inner" style="padding:0;position:relative;">
+                    <img src="pic2.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:8px;z-index:2;">
+                    <div style="position:relative;z-index:6;width:100%;text-align:center;padding:6px;background:linear-gradient(transparent,rgba(0,0,0,0.75));border-radius:0 0 8px 8px;margin-top:auto;"><div class="panel-title">2</div></div>
+                </div>
+            </div>
+            <div class="panel-btn" data-story="3">
+                <div class="panel-glow-ring"></div>
+                <div class="panel-corners"><span style="--cc:#FF00CC"></span><span style="--cc:#00FF88"></span><span style="--cc:#FFD700"></span><span style="--cc:#00CCFF"></span></div>
+                <div class="panel-inner" style="padding:0;position:relative;">
+                    <img src="pic3.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:8px;z-index:2;">
+                    <div style="position:relative;z-index:6;width:100%;text-align:center;padding:6px;background:linear-gradient(transparent,rgba(0,0,0,0.75));border-radius:0 0 8px 8px;margin-top:auto;"><div class="panel-title">3</div></div>
+                </div>
+            </div>
+            <div class="panel-btn" data-story="4">
+                <div class="panel-glow-ring"></div>
+                <div class="panel-corners"><span style="--cc:#FFD700"></span><span style="--cc:#FF8800"></span><span style="--cc:#00CCFF"></span><span style="--cc:#FF00AA"></span></div>
+                <div class="panel-inner" style="padding:0;position:relative;">
+                    <img src="pic4.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:8px;z-index:2;">
+                    <div style="position:relative;z-index:6;width:100%;text-align:center;padding:6px;background:linear-gradient(transparent,rgba(0,0,0,0.75));border-radius:0 0 8px 8px;margin-top:auto;"><div class="panel-title">4</div></div>
+                </div>
+            </div>
+            <div class="panel-btn" data-story="5">
+                <div class="panel-glow-ring"></div>
+                <div class="panel-corners"><span style="--cc:#00FF88"></span><span style="--cc:#FFD700"></span><span style="--cc:#FF4400"></span><span style="--cc:#AA44FF"></span></div>
+                <div class="panel-inner" style="padding:0;position:relative;">
+                    <img src="pic5.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:8px;z-index:2;">
+                    <div style="position:relative;z-index:6;width:100%;text-align:center;padding:6px;background:linear-gradient(transparent,rgba(0,0,0,0.75));border-radius:0 0 8px 8px;margin-top:auto;"><div class="panel-title">5</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CENTRE ARCH -->
+        <div id="thorana" align="center">
+            <div id="rasvalalla">
+                <div id="rasvalalla-core"></div>
+                <div class="ray-burst" id="ray-burst"></div>
+            </div>
+            <img src="image copy.png" style="width:100%;border-radius:6px;object-fit:cover;">
+            <div class="flame-cluster">
+                <div class="flame" style="--ff:.5s;height:14px;width:7px;"></div>
+                <div class="flame" style="--ff:.7s;height:20px;width:9px;"></div>
+                <div class="flame" style="--ff:.4s;height:26px;width:11px;"></div>
+                <div class="flame" style="--ff:.6s;height:20px;width:9px;"></div>
+                <div class="flame" style="--ff:.5s;height:14px;width:7px;"></div>
+            </div>
+            <div class="blink-row top"        id="blink-top"></div>
+            <div class="blink-row left-side"  id="blink-left"></div>
+            <div class="blink-row right-side" id="blink-right"></div>
+        </div>
+
+        <!-- RIGHT PANELS (stories 6-10) -->
+        <div class="panel-col-right">
+            <div class="panel-btn" data-story="6">
+                <div class="panel-glow-ring"></div>
+                <div class="panel-corners"><span style="--cc:#FFD700"></span><span style="--cc:#00FF88"></span><span style="--cc:#FF00CC"></span><span style="--cc:#00CCFF"></span></div>
+                <div class="panel-inner" style="padding:0;position:relative;">
+                    <img src="pic6.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:8px;z-index:2;">
+                    <div style="position:relative;z-index:6;width:100%;text-align:center;padding:6px;background:linear-gradient(transparent,rgba(0,0,0,0.75));border-radius:0 0 8px 8px;margin-top:auto;"><div class="panel-title">6</div></div>
+                </div>
+            </div>
+            <div class="panel-btn" data-story="7">
+                <div class="panel-glow-ring"></div>
+                <div class="panel-corners"><span style="--cc:#FF4400"></span><span style="--cc:#FFD700"></span><span style="--cc:#AA44FF"></span><span style="--cc:#00FF88"></span></div>
+                <div class="panel-inner" style="padding:0;position:relative;">
+                    <img src="pic7.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:8px;z-index:2;">
+                    <div style="position:relative;z-index:6;width:100%;text-align:center;padding:6px;background:linear-gradient(transparent,rgba(0,0,0,0.75));border-radius:0 0 8px 8px;margin-top:auto;"><div class="panel-title">7</div></div>
+                </div>
+            </div>
+            <div class="panel-btn" data-story="8">
+                <div class="panel-glow-ring"></div>
+                <div class="panel-corners"><span style="--cc:#00CCFF"></span><span style="--cc:#FF00AA"></span><span style="--cc:#FFD700"></span><span style="--cc:#FF4400"></span></div>
+                <div class="panel-inner" style="padding:0;position:relative;">
+                    <img src="pic8.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:8px;z-index:2;">
+                    <div style="position:relative;z-index:6;width:100%;text-align:center;padding:6px;background:linear-gradient(transparent,rgba(0,0,0,0.75));border-radius:0 0 8px 8px;margin-top:auto;"><div class="panel-title">8</div></div>
+                </div>
+            </div>
+            <div class="panel-btn" data-story="9">
+                <div class="panel-glow-ring"></div>
+                <div class="panel-corners"><span style="--cc:#AA44FF"></span><span style="--cc:#FFD700"></span><span style="--cc:#00CCFF"></span><span style="--cc:#FF4400"></span></div>
+                <div class="panel-inner" style="padding:0;position:relative;">
+                    <img src="pic9.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:8px;z-index:2;">
+                    <div style="position:relative;z-index:6;width:100%;text-align:center;padding:6px;background:linear-gradient(transparent,rgba(0,0,0,0.75));border-radius:0 0 8px 8px;margin-top:auto;"><div class="panel-title">9</div></div>
+                </div>
+            </div>
+            <div class="panel-btn" data-story="10">
+                <div class="panel-glow-ring"></div>
+                <div class="panel-corners"><span style="--cc:#FFD700"></span><span style="--cc:#FF8800"></span><span style="--cc:#00FF88"></span><span style="--cc:#AA44FF"></span></div>
+                <div class="panel-inner" style="padding:0;position:relative;">
+                    <img src="pic10.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:8px;z-index:2;">
+                    <div style="position:relative;z-index:6;width:100%;text-align:center;padding:6px;background:linear-gradient(transparent,rgba(0,0,0,0.75));border-radius:0 0 8px 8px;margin-top:auto;"><div class="panel-title">10</div></div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /stage -->
+
+    <!-- Lantern row -->
+    <div id="lantern-row">
+        <div class="static-lantern" style="width:36px;height:50px;background:radial-gradient(ellipse at 50% 40%,#fff8aa,#ff8800 60%,#7a0000 100%);box-shadow:0 0 20px 8px #ff990077;animation-delay:0s;"></div>
+        <div class="static-lantern" style="width:30px;height:44px;background:radial-gradient(ellipse at 50% 40%,#ccffcc,#00cc44 60%,#004400 100%);box-shadow:0 0 16px 6px #00ff7733;animation-delay:.4s;"></div>
+        <div class="static-lantern" style="width:42px;height:58px;background:radial-gradient(ellipse at 50% 40%,#ffffcc,#ffd700 60%,#7a5200 100%);box-shadow:0 0 24px 10px #ffd70077;animation-delay:.8s;"></div>
+        <div class="static-lantern" style="width:30px;height:44px;background:radial-gradient(ellipse at 50% 40%,#ffccee,#ff4488 60%,#7a0044 100%);box-shadow:0 0 16px 6px #ff448877;animation-delay:1.2s;"></div>
+        <div class="static-lantern" style="width:36px;height:50px;background:radial-gradient(ellipse at 50% 40%,#ccddff,#4466ff 60%,#000077 100%);box-shadow:0 0 20px 8px #4466ff66;animation-delay:1.6s;"></div>
+    </div>
+
+    <footer>
+        <p>සබ්බේ සත්තා සුඛිතා හොන්තු &nbsp;|&nbsp; <span>May all beings be happy</span></p>
+        <p style="margin-top:5px;">🌸 Digital Thorana – POSON 2026 ☸︎</p>
+    </footer>
+</div><!-- /wrapper -->
+
+<!-- ── MANUAL STORY POPUP ── -->
+<div id="popup-overlay" role="dialog" aria-modal="true">
+    <div id="popup-box">
+        <button id="popup-close" aria-label="Close">✕</button>
+        <h2 id="popup-title"></h2>
+        <div id="popup-story-art"></div>
+        <p id="popup-text"></p>
+        <div id="popup-nav">
+            <button class="pop-btn" id="pop-prev">◀ Previous</button>
+            <button class="pop-btn" id="pop-next">Next ▶</button>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     CINEMATIC AUTO-POPUP  (audio-synced, image only)
+══════════════════════════════════════════════ -->
+<div id="auto-overlay" role="dialog" aria-modal="true" aria-label="Story frame">
+    <div id="auto-card">
+        <div id="auto-img-wrap">
+            <img id="auto-img" src="" alt="">
+        </div>
+        <div id="auto-caption">
+            <div id="auto-caption-inner">
+                <div id="auto-chapter-lbl"></div>
+                <div id="auto-title-lbl"></div>
+                <p id="auto-text-lbl"></p>
+            </div>
+        </div>
+        <div id="auto-footer">
+            <button id="auto-dismiss">✕ Dismiss</button>
+        </div>
+        <div id="auto-bar-wrap">
+            <div id="auto-bar"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Play/Pause sound button (bottom-right) -->
+<button id="sound-btn" title="Play sound">▶</button>
+
+<!-- Audio: sound.mp3 drives everything — no separate narrator file needed -->
+<audio id="bg-music" src="sound.mp3" preload="auto"></audio>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   STARS
+══════════════════════════════════════════════════════ */
+(function(){
+    const sky = document.getElementById('sky');
+    for(let i=0;i<180;i++){
+        const s=document.createElement('div');s.className='star';
+        const sz=Math.random()*3+1;
+        s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${sz}px;height:${sz}px;--d:${(Math.random()*4+1).toFixed(1)}s;animation-delay:${(Math.random()*5).toFixed(1)}s;`;
+        sky.appendChild(s);
+    }
+})();
+
+/* ══════════════════════════════════════════════════════
+   BUNTINGS
+══════════════════════════════════════════════════════ */
+(function(){
+    const row=document.getElementById('bunting');
+    const cols=['#CC0000','#FF8C00','#FFD700','#228B22','#1E90FF','#9932CC','#FF1493'];
+    for(let i=0;i<70;i++){
+        const t=document.createElement('div');t.className='flag-tri';
+        t.style.setProperty('--c',cols[i%cols.length]);
+        t.style.animationDelay=(i*.07)+'s';
+        row.appendChild(t);
+    }
+})();
+
+/* ══════════════════════════════════════════════════════
+   ARCH BULBS
+══════════════════════════════════════════════════════ */
+function makeBulbs(id,n){
+    const el=document.getElementById(id);
+    const bc=['#FFD700','#FF4400','#00FF88','#FF00AA','#00CCFF','#FFFFFF'];
+    for(let i=0;i<n;i++){
+        const b=document.createElement('div');b.className='bulb';
+        const c=bc[i%bc.length];
+        b.style.setProperty('--bc',c);
+        b.style.setProperty('--bd',(0.5+Math.random()*1.5).toFixed(2)+'s');
+        b.style.animationDelay=(Math.random()*2).toFixed(2)+'s';
+        el.appendChild(b);
+    }
+}
+makeBulbs('blink-top',40);makeBulbs('blink-left',20);makeBulbs('blink-right',20);
+
+/* ══════════════════════════════════════════════════════
+   රස්වළල්ල — generate radiating rays + twinkling sparks
+══════════════════════════════════════════════════════ */
+(function(){
+    const burst = document.getElementById('ray-burst');
+    const RAY_COUNT = 24;
+    for(let i=0;i<RAY_COUNT;i++){
+        const r=document.createElement('div');r.className='ray';
+        const angle=(360/RAY_COUNT)*i;
+        r.style.transform=`translate(-50%,0) rotate(${angle}deg)`;
+        r.style.animationDelay=(Math.random()*2.4).toFixed(2)+'s';
+        r.style.height=(40+Math.random()*10)+'%';
+        burst.appendChild(r);
+    }
+
+    const halo = document.getElementById('rasvalalla');
+    const SPARK_COUNT = 16;
+    for(let i=0;i<SPARK_COUNT;i++){
+        const s=document.createElement('div');s.className='halo-spark';
+        const angle = Math.random()*Math.PI*2;
+        const dist  = 30+Math.random()*30; // % from centre
+        const x = 50 + Math.cos(angle)*dist;
+        const y = 50 + Math.sin(angle)*dist;
+        const sz = 2+Math.random()*3;
+        s.style.cssText=`left:${x}%;top:${y}%;width:${sz}px;height:${sz}px;--sd:${(1.6+Math.random()*2.2).toFixed(2)}s;`;
+        s.style.animationDelay=(Math.random()*3).toFixed(2)+'s';
+        halo.appendChild(s);
+    }
+})();
+
+/* ══════════════════════════════════════════════════════
+   STORY DATA  (title + text for each panel)
+══════════════════════════════════════════════════════ */
+const stories = {
+    1:  { title:'බෝසත් වඳුරු රජු සහ වාසස්ථානය',   img:'pic1.png',  text:'ඈත හිමාල පර්වත පාමුල, සිසිල් දිය දහර ගලා බසිනා ගංගා ඉවුරක, අහස සිඹින මහා අඹ වෘක්ෂයක් තිබුණි. එහි හටගත් අඹ ගෙඩි දිව්‍යමය රසයෙන් යුක්ත වූ අතර, රන්වන් පැහැයෙන් බැබළුණි. මේ මනරම් අඹ වනය පාලනය කළේ මහා ප්‍රඥාවන්ත, දයානුකම්පිත බෝසත් වඳුරු රජුය.' },
+    2:  { title:'ගඟට වැටුණු අඹ ගෙඩිය',             img:'pic2.png',  text:'වඳුරු රජු තම පිරිසට නිතරම අවවාද කළේ ගඟ දෙසට බරවී ඇති අතුවල පවතින අඹ ගෙඩි, ඒවා ඉදුණු සැණින් නෙළා ගන්නා ලෙසයි. නමුත් එක් දිනක, කොළ අත්තකට වැසී තිබූ විශාල අඹ ගෙඩියක් ගඟට වැටී, බරණැස් රජුගේ ඔරුව ළඟ නතර විය.' },
+    3:  { title:'බරණැස් රජුට අඹ ගෙඩිය හමුවීම',    img:'pic3.png',  text:'රාජකීය සේවකයින් ගඟේ පාවෙමින් තිබූ අඹ ගෙඩිය රජතුමාට පිළිගන්වා, එහි දිව්‍යමය රසයෙන් මවිත වූ රජු, මේ ගෙඩිය හටගන්නා ගස සොයා ගවේෂණ ගමනක් ආරම්භ කළේය.' },
+    4:  { title:'වඳුරු රැළ කොටු වීම',               img:'pic4.png',  text:'දින කිහිපයකින් රජු ඇතුළු සේනාව අතිවිශාල අඹ ගස සොයා ගත්හ. "උන් සියල්ලෝම විනාශ කර ගස අප සතු කරගනිමු!" රජු ගිගුරුවේය. ආයුධ සන්නද්ධ සොල්දාදුවන් ගස වටලද්දී, බියට පත් වඳුරු පිරිස අසරණ වූහ.' },
+    5:  { title:'බෝසත් වඳුරු රජුගේ තීරණය',         img:'pic5.png',  text:'නායකයෙකු ලෙස තම පිරිස බේරාගැනීමේ පරම වගකීම ඔහු සතු විය. තම ජීවිතය ගැන නොසිතූ බෝසත් වඳුරු රජු, ගඟෙන් එගොඩට කෙසේ හෝ ගැලවීමේ මඟක් තැනීමේ අදිටනින් යුතුව ශක්තිය යෙදීය.' },
+    6:  { title:'වැල් පාලම නිර්මාණය',               img:'pic6.png',  text:'ගඟෙන් එගොඩට පැන ගත් වඳුරු රජු ශක්තිමත් වැලක් සොයාගෙන ඉණෙහි බැන්දේය. ඔහුගේ ශරීරය ගඟ හරහා ඇදුණු ජීවමාන පාලමක් බවට පත් විය — එක අතකින් වැලද, අනෙක් අතකින් අඹ අත්තද අල්ලාගෙන.' },
+    7:  { title:'වඳුරන්ගේ ගැලවීම',                   img:'pic7.png',  text:'"මාගේ ප්‍රියාවෙනි, ප්‍රමාද නොවී මාගේ පිට මතින් ආරක්ෂිතව යන්න!" රජු කෑගැසුවේය. සිය ගණනක් වඳුරන් ඔහුගේ පිට මතින් පාගමින් ගැලවී ගියද, ඔහුගේ මුහුණේ ඉවසීම හා කරුණාව පමණක් විය.' },
+    8:  { title:'පාවාදීම — දේවදත්ත වඳුරා',          img:'pic8.png',  text:'අවසාන වඳුරා — කලින් භවයෙන් සිටම වෛරය දරාගත් දේවදත්ත — හිතාමතාම ඉහළට පැන, මුළු ශක්තියෙන් වඳුරු රජුගේ කොන්ද මත පතිත විය. ඒ දරුණු පහරින් ඔහුගේ කොන්ද බිඳී ගියේය.' },
+    9:  { title:'බරණැස් රජුගේ පුදුමය',              img:'pic9.png',  text:'තිරිසන් සතෙකු වුවද තම පිරිස උදෙසා ජීවිතය පූජා කළ ආකාරය දුටු රජු මහත් සේ සංවේගයට පත් විය. ඔහු වහා සේනාවට අණ දී, තුවාල ලැබූ වඳුරු රජු ගඟෙන් ඉවතට ගෙනාවේය.' },
+    10: { title:'ධර්ම දේශනාව සහ අවසානය',            img:'pic10.png', text:'මරණාසන්නව සිටි වඳුරු රජු, "සැබෑ නායකයා යනු ජනයා වෙනුවෙන් ජීවිතය දීමට ද සැදී සිටින සේවකයෙකි" යැයි රජතුමාට ධර්මෝපදේශයක් ලබා දී, දෑස් මිය ගත්තේය. බරණැස් රජු වඩාත් යහපත් රජෙකු වීමට අධිෂ්ඨාන කර ගත්තේය.' },
+};
+
+/* ══════════════════════════════════════════════════════
+   MANUAL PANEL CLICK → POPUP
+══════════════════════════════════════════════════════ */
+let cur=1;
+const ov   = document.getElementById('popup-overlay');
+const pT   = document.getElementById('popup-title');
+const pA   = document.getElementById('popup-story-art');
+const pTx  = document.getElementById('popup-text');
+
+function openStory(n){
+    cur=n; const s=stories[n]; if(!s)return;
+    pT.textContent=s.title;
+    pA.innerHTML=`<img src="${s.img}" alt="${s.title}">`;
+    pTx.textContent=s.text;
+    ov.classList.add('show');
+}
+function closeStory(){
+    ov.classList.remove('show');
+}
+
+document.querySelectorAll('.panel-btn').forEach(b=>{
+    b.addEventListener('click',()=>{ openStory(+b.dataset.story); });
+});
+document.getElementById('popup-close').addEventListener('click',closeStory);
+ov.addEventListener('click',e=>{if(e.target===ov)closeStory();});
+document.getElementById('pop-prev').addEventListener('click',()=>{
+    cur=cur>1?cur-1:10; openStory(cur);
+});
+document.getElementById('pop-next').addEventListener('click',()=>{
+    cur=cur<10?cur+1:1; openStory(cur);
+});
+
+/* ══════════════════════════════════════════════════════
+   SOUND PLAY/PAUSE  (▶ / ⏸ button, bottom-right)
+   Sound starts the moment the visitor taps "ආරම්භ කරන්න"
+   on the welcome gate — that tap is the user gesture
+   browsers require before audio is allowed to play.
+══════════════════════════════════════════════════════ */
+const bgMusic  = document.getElementById('bg-music');
+const sBtn     = document.getElementById('sound-btn');
+let soundOn    = false;
+
+bgMusic.volume = 0.45;
+
+function startAudio(){
+    bgMusic.play().then(()=>{
+        soundOn=true; sBtn.textContent='⏸'; sBtn.title='Pause sound';
+    }).catch(e=>{
+        soundOn=false; sBtn.textContent='▶'; sBtn.title='Play sound';
+        console.warn('Audio blocked:',e);
+    });
+}
+function stopAudio(){
+    soundOn=false; sBtn.textContent='▶'; sBtn.title='Play sound';
+    bgMusic.pause();
+}
+
+sBtn.addEventListener('click',()=>{
+    if(soundOn) stopAudio(); else startAudio();
+});
+
+/* ══════════════════════════════════════════════════════
+   WELCOME GATE  — "ආරම්භ කරන්න" button
+   Dismisses the welcome card and starts sound in the
+   same click, satisfying the browser's autoplay rule.
+══════════════════════════════════════════════════════ */
+const welcomeOverlay = document.getElementById('welcome-overlay');
+const welcomeEnterBtn = document.getElementById('welcome-enter-btn');
+
+welcomeEnterBtn.addEventListener('click',()=>{
+    welcomeOverlay.classList.add('hide');
+    startAudio();
+});
+
+/* ══════════════════════════════════════════════════════
+   AUDIO-SYNC ENGINE
+   ─────────────────
+   STORY_SEGMENTS — edit these timestamps (seconds) to
+   control exactly when each image pops up and hides.
+
+   0:00–0:32  → no popup  (intro)
+   0:32–2:05  → pic 1
+   2:05–2:42  → pic 2
+   2:42–3:29  → pic 3
+   3:29–4:40  → pic 4
+   4:40–4:52  → pic 5
+   4:52–5:40  → pic 6
+   5:40–6:27  → pic 7
+   6:27–6:41  → pic 8
+   6:41–7:12  → pic 9
+   7:12–8:36  → pic 10
+   8:36–9:30  → no popup  (outro)
+══════════════════════════════════════════════════════ */
+const SEGMENTS = [
+    { start:  32, end: 125, story:  1 },   // 0:32 – 2:05
+    { start: 125, end: 162, story:  2 },   // 2:05 – 2:42
+    { start: 162, end: 209, story:  3 },   // 2:42 – 3:29
+    { start: 209, end: 280, story:  4 },   // 3:29 – 4:40
+    { start: 280, end: 292, story:  5 },   // 4:40 – 4:52
+    { start: 292, end: 340, story:  6 },   // 4:52 – 5:40
+    { start: 340, end: 387, story:  7 },   // 5:40 – 6:27
+    { start: 387, end: 401, story:  8 },   // 6:27 – 6:41
+    { start: 401, end: 432, story:  9 },   // 6:41 – 7:12
+    { start: 432, end: 516, story: 10 },   // 7:12 – 8:36
+];
+
+/* DOM refs for auto-popup */
+const autoOverlay   = document.getElementById('auto-overlay');
+const autoImg       = document.getElementById('auto-img');
+const autoChapter   = document.getElementById('auto-chapter-lbl');
+const autoTitleLbl  = document.getElementById('auto-title-lbl');
+const autoTextLbl   = document.getElementById('auto-text-lbl');
+const autoBar       = document.getElementById('auto-bar');
+const autoDismiss   = document.getElementById('auto-dismiss');
+
+const autoCard      = document.getElementById('auto-card');
+let activeIdx      = -1;   // currently shown segment index
+let pendingIdx     = -1;   // segment index mid-transition (fading out), -1 if none
+let dismissedUntil = -1;   // suppressed until this time
+let barRAF         = null; // rAF handle for timer bar
+let switchTimer    = null; // pending content-swap timeout during a transition
+
+/* Apply the actual content (image/text) for segment index i */
+function applyFrameContent(i){
+    const seg = SEGMENTS[i];
+    const s   = stories[seg.story];
+    if(!s) return;
+
+    autoImg.src             = s.img;
+    autoImg.alt             = s.title;
+    autoChapter.textContent = `Chapter ${seg.story} of 10`;
+    autoTitleLbl.textContent= s.title;
+    autoTextLbl.textContent = s.text;
+}
+
+/* Restart the countdown bar for segment index i */
+function restartBar(i){
+    const seg = SEGMENTS[i];
+    const dur   = seg.end - seg.start;
+    const elap  = Math.max(0, bgMusic.currentTime - seg.start);
+    const rem   = Math.max(0, dur - elap);
+    const pct   = elap/dur;
+
+    cancelAnimationFrame(barRAF);
+    autoBar.style.transition='none';
+    autoBar.style.transform =`scaleX(${1-pct})`;
+    barRAF = requestAnimationFrame(()=>{
+        autoBar.style.transition=`transform ${rem}s linear`;
+        autoBar.style.transform ='scaleX(0)';
+    });
+}
+
+/* Show popup for segment index i, with a smooth cross-fade when changing
+   from one chapter's picture/text to the next */
+function showFrame(i){
+    if(i<0||i>=SEGMENTS.length) return;
+    if(i===activeIdx || i===pendingIdx) return; // already showing or already transitioning to this one
+
+    const wasVisible = autoOverlay.classList.contains('visible');
+    const isChapterChange = wasVisible && activeIdx!==-1 && activeIdx!==i;
+
+    autoOverlay.classList.add('visible');
+
+    clearTimeout(switchTimer);
+    if(isChapterChange){
+        /* fade the current picture/text out, then swap, then fade in */
+        pendingIdx = i;
+        autoCard.classList.add('frame-switching');
+        switchTimer = setTimeout(()=>{
+            applyFrameContent(i);
+            restartBar(i);
+            autoCard.classList.remove('frame-switching');
+            activeIdx  = i;
+            pendingIdx = -1;
+        },380);
+    } else {
+        /* first open (no previous frame to fade from) — just fade in */
+        applyFrameContent(i);
+        restartBar(i);
+        activeIdx  = i;
+        pendingIdx = -1;
+    }
+}
+
+/* Hide popup */
+function hideFrame(){
+    autoOverlay.classList.remove('visible');
+    autoCard.classList.remove('frame-switching');
+    clearTimeout(switchTimer);
+    cancelAnimationFrame(barRAF);
+    activeIdx  = -1;
+    pendingIdx = -1;
+}
+
+/* Find which segment contains time t */
+function segAt(t){
+    for(let i=0;i<SEGMENTS.length;i++){
+        if(t>=SEGMENTS[i].start && t<SEGMENTS[i].end) return i;
+    }
+    return -1;
+}
+
+/* Core sync: fires ~4×/s */
+bgMusic.addEventListener('timeupdate',function(){
+    const t   = bgMusic.currentTime;
+    const idx = segAt(t);
+
+    /* still within user-dismissed window */
+    if(dismissedUntil>0 && t<dismissedUntil){
+        if(activeIdx!==-1) hideFrame();
+        return;
+    }
+    if(t>=dismissedUntil) dismissedUntil=-1;
+
+    /* same segment — no change needed */
+    if(idx===activeIdx) return;
+
+    if(idx===-1) hideFrame();
+    else         showFrame(idx);
+});
+
+/* Loop forever (for projector / continuous display use) */
+bgMusic.addEventListener('ended', function(){
+    hideFrame();
+    dismissedUntil = -1;          // clear any dismiss-suppression from the previous loop
+    bgMusic.currentTime = 0;
+    bgMusic.play().catch(e=>console.warn('Loop replay blocked:',e));
+});
+
+/* Dismiss button */
+autoDismiss.addEventListener('click',function(){
+    if(activeIdx>=0) dismissedUntil=SEGMENTS[activeIdx].end;
+    hideFrame();
+});
+/* Backdrop click also dismisses */
+autoOverlay.addEventListener('click',function(e){
+    if(e.target===autoOverlay) autoDismiss.click();
+});
+
+/* Preload all story images */
+SEGMENTS.forEach(seg=>{ const img=new Image(); img.src=stories[seg.story].img; });
+
+/* ══════════════════════════════════════════════════════
+   KEYBOARD
+══════════════════════════════════════════════════════ */
+document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+        if(autoOverlay.classList.contains('visible')) autoDismiss.click();
+        else closeStory();
+    }
+    if(e.key==='ArrowLeft'  && ov.classList.contains('show')){ cur=cur>1?cur-1:10; openStory(cur); }
+    if(e.key==='ArrowRight' && ov.classList.contains('show')){ cur=cur<10?cur+1:1; openStory(cur); }
+});
+
+/* ══════════════════════════════════════════════════════
+   AUTO-SCROLL  (slow, continuous up ⇄ down)
+   - Page gently scrolls down to the bottom, then back up
+     to the top, repeating forever — never stops on its own.
+   - Pauses the instant the user clicks, touches, scrolls,
+     or presses a key, then resumes automatically after
+     15 seconds of no further interaction.
+   - During the final 20 seconds of the audio track, normal
+     ping-pong scrolling is suspended and the page glides to
+     and holds on the thorana (Buddha image) centred in view —
+     a "homecoming" moment timed to the narration's end.
+══════════════════════════════════════════════════════ */
+const AutoScrollCtl = (function(){
+    const SPEED          = 0.4;   // px per animation frame — kept slow on purpose
+    const RESUME_DELAY   = 15000; // ms of inactivity before auto-scroll resumes
+    const EDGE_PAUSE     = 900;   // ms pause at top/bottom before reversing
+    const HOME_SPEED     = 1.2;   // px per frame while gliding toward the thorana
+
+    let direction      = 1;     // 1 = scrolling down, -1 = scrolling up
+    let rafId          = null;
+    let resumeTimer    = null;
+    let userPaused     = false;
+    let edgePauseTimer = null;
+    let homecoming     = false; // true during the final-20s "return to thorana" window
+
+    function atBottom(){
+        return (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 2);
+    }
+    function atTop(){
+        return window.scrollY <= 1;
+    }
+    function thoranaTargetY(){
+        const el = document.getElementById('thorana');
+        if(!el) return window.scrollY;
+        const rect = el.getBoundingClientRect();
+        const elCentre = rect.top + window.scrollY + rect.height/2;
+        return Math.max(0, elCentre - window.innerHeight/2);
+    }
+
+    function step(){
+        if(userPaused && !homecoming){ rafId=null; return; }
+
+        if(homecoming){
+            const target = thoranaTargetY();
+            const diff   = target - window.scrollY;
+            if(Math.abs(diff) <= 1){
+                window.scrollTo(0, target);
+                rafId = requestAnimationFrame(step); // hold steady, keep loop alive
+                return;
+            }
+            const move = Math.sign(diff) * Math.min(HOME_SPEED, Math.abs(diff));
+            window.scrollBy(0, move);
+            rafId = requestAnimationFrame(step);
+            return;
+        }
+
+        if(direction===1 && atBottom()){
+            clearTimeout(edgePauseTimer);
+            edgePauseTimer = setTimeout(()=>{ direction=-1; rafId=requestAnimationFrame(step); }, EDGE_PAUSE);
+            return;
+        }
+        if(direction===-1 && atTop()){
+            clearTimeout(edgePauseTimer);
+            edgePauseTimer = setTimeout(()=>{ direction=1; rafId=requestAnimationFrame(step); }, EDGE_PAUSE);
+            return;
+        }
+
+        window.scrollBy(0, SPEED*direction);
+        rafId = requestAnimationFrame(step);
+    }
+
+    function startAutoScroll(){
+        if(rafId) return; // already running
+        rafId = requestAnimationFrame(step);
+    }
+    function stopAutoScroll(){
+        if(rafId){ cancelAnimationFrame(rafId); rafId=null; }
+        clearTimeout(edgePauseTimer);
+    }
+
+    /* Any real user interaction pauses the ping-pong scroll, then schedules
+       a resume — ignored while a homecoming is in progress, since that
+       should always run through to the end regardless of clicks/taps
+       (popups, prev/next, etc. should not derail it). */
+    function onUserInteraction(){
+        if(homecoming) return;
+        userPaused = true;
+        stopAutoScroll();
+        clearTimeout(resumeTimer);
+        resumeTimer = setTimeout(()=>{
+            userPaused = false;
+            startAutoScroll();
+        }, RESUME_DELAY);
+    }
+
+    ['pointerdown','touchstart','wheel','keydown'].forEach(evt=>{
+        window.addEventListener(evt,onUserInteraction,{passive:true});
+    });
+
+    /* Begin once the welcome gate has been dismissed (so it doesn't
+       fight the welcome card or start before the visitor has entered) */
+    welcomeEnterBtn.addEventListener('click',()=>{
+        setTimeout(startAutoScroll, 800);
+    });
+
+    /* ── Public control surface (used by the audio-end listener) ── */
+    return {
+        enterHomecoming(){
+            if(homecoming) return;
+            homecoming = true;
+            userPaused = false;
+            clearTimeout(resumeTimer);
+            clearTimeout(edgePauseTimer);
+            startAutoScroll();
+        },
+        exitHomecoming(){
+            homecoming = false;
+        }
+    };
+})();
+
+/* Drive the homecoming moment off the audio clock: during the final
+   20 seconds of each loop, glide to and hold the thorana centred —
+   then release back to normal ping-pong scrolling once it loops. */
+(function(){
+    const HOMECOMING_WINDOW = 20; // seconds before the track ends
+    let wasInWindow = false;
+
+    bgMusic.addEventListener('timeupdate', function(){
+        const dur = bgMusic.duration;
+        if(!isFinite(dur) || dur<=0) return;
+        const remaining = dur - bgMusic.currentTime;
+        const inWindow  = remaining <= HOMECOMING_WINDOW;
+
+        if(inWindow && !wasInWindow){
+            AutoScrollCtl.enterHomecoming();
+        } else if(!inWindow && wasInWindow){
+            AutoScrollCtl.exitHomecoming();
+        }
+        wasInWindow = inWindow;
+    });
+
+    /* Safety: also release on loop restart (covers the 'ended' handler
+       resetting currentTime to 0 before timeupdate fires again) */
+    bgMusic.addEventListener('ended', function(){
+        wasInWindow = false;
+        AutoScrollCtl.exitHomecoming();
+    });
+})();
+</script>
+</body>
+</html>
